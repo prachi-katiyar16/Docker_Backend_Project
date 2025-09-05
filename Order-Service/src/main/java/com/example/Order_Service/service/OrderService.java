@@ -2,13 +2,20 @@ package com.example.Order_Service.service;
 
 import com.example.Order_Service.entity.Order;
 import com.example.Order_Service.entity.OrderItem;
-import com.example.Order_Service.model.*;
 import com.example.Order_Service.repository.OrderRepository;
+import com.example.common.dto.*;
+import jakarta.servlet.http.HttpServletRequest;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDateTime;
@@ -31,19 +38,28 @@ public class OrderService {
     @Value("${cart.service.url}")
     private String cartServiceUrl;
 
-    public Order initiateOrder(String userId) {
+    @Transactional
+    public Order initiateOrder(String userId, String authToken) {
+        HttpHeaders headers = new HttpHeaders();
 
-        CartDTO cart = restTemplate.getForObject(cartServiceUrl + "/" + userId, CartDTO.class);
-        if (cart == null || cart.getItems().isEmpty()) {
-            throw new IllegalStateException("Cannot place an empty order. Cart is empty for user: " + userId);
+        if (authToken != null) {
+            headers.set(HttpHeaders.AUTHORIZATION, authToken); // forward token exactly as received
         }
+        HttpEntity<Void> entity = new HttpEntity<>(headers);
+        ResponseEntity<CartDTO> response = restTemplate.exchange(
+                cartServiceUrl,
+                HttpMethod.GET,
+                entity,
+                CartDTO.class
+        );
 
-
+// Get the body
+        CartDTO cart = response.getBody();
         Order order = Order.builder()
                 .userId(userId)
                 .orderDate(LocalDateTime.now())
                 .totalAmount(cart.getTotalPrice())
-                .orderStatus("PENDING_PAYMENT") // New status
+                .orderStatus("PENDING_PAYMENT")
                 .build();
 
         order.setOrderItems(cart.getItems().stream().map(cartItem ->
@@ -59,20 +75,27 @@ public class OrderService {
 
         Order savedOrder = orderRepository.save(order);
 
-        OrderCreatedEvent event = new OrderCreatedEvent(
+        List<OrderItemDTO> dtoList = savedOrder.getOrderItems().stream()
+                .map(item -> new OrderItemDTO(item.getProductId(), item.getQuantity()))
+                .collect(Collectors.toList());
+
+
+        OrderPlacedEvent event = new OrderPlacedEvent(
                 savedOrder.getId(),
                 savedOrder.getUserId(),
                 savedOrder.getTotalAmount(),
-                savedOrder.getOrderItems().stream()
-                        .map(item -> new OrderItemDTO(item.getProductId(), item.getQuantity()))
-                        .collect(Collectors.toList())
+                dtoList,
+                authToken
         );
+
         kafkaTemplate.send("order-placed-topic", event);
+
 
         return savedOrder;
     }
 
     @KafkaListener(topics = "payment-processed-topic", groupId = "order-group")
+    @Transactional
     public void handlePaymentResult(PaymentProcessedEvent paymentEvent) {
         Order order = orderRepository.findById(paymentEvent.getOrderId())
                 .orElseThrow(() -> new RuntimeException("Order not found after payment processing: " + paymentEvent.getOrderId()));
@@ -80,7 +103,7 @@ public class OrderService {
         if ("SUCCESS".equals(paymentEvent.getPaymentStatus())) {
 
             order.setOrderStatus("CONFIRMED");
-            orderRepository.save(order);
+
 
             OrderConfirmedEvent confirmedEvent = new OrderConfirmedEvent(
                     order.getId(),
@@ -90,11 +113,24 @@ public class OrderService {
             );
             kafkaTemplate.send("order-confirmed-topic", confirmedEvent);
 
+            String authHeader=paymentEvent.getAuthToken();
+
+            HttpHeaders headers=new HttpHeaders();
+            if (authHeader!=null){
+                headers.set(HttpHeaders.AUTHORIZATION,authHeader);
+            }
 
             CartItemRemovalRequest removalRequest = new CartItemRemovalRequest(
                     order.getOrderItems().stream().map(OrderItem::getProductId).collect(Collectors.toList())
             );
-            restTemplate.postForObject(cartServiceUrl + "/items/delete-ordered", removalRequest, Void.class, order.getUserId());
+            HttpEntity<CartItemRemovalRequest> requestEntity =new HttpEntity<>(removalRequest,headers);
+
+            restTemplate.exchange(
+                    cartServiceUrl + "/items/delete-ordered",
+                    HttpMethod.POST,
+                    requestEntity,
+                    Void.class
+            );
 
         } else {
 
@@ -103,8 +139,6 @@ public class OrderService {
 
         }
     }
-
-
 
     public List<Order> getOrdersForUser(String userId, String userRole) {
         if ("ADMIN".equalsIgnoreCase(userRole)) {

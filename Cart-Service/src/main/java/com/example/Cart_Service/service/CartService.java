@@ -5,8 +5,9 @@ import com.example.Cart_Service.exception.ProductNotFoundException;
 import com.example.Cart_Service.model.AddItemRequest;
 import com.example.Cart_Service.model.Cart;
 import com.example.Cart_Service.model.CartItem;
-import com.example.Cart_Service.model.ProductDTO;
+
 import com.example.Cart_Service.repository.CartRepository;
+import com.example.common.dto.ProductDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -57,8 +58,8 @@ public class CartService {
 
 
         HttpHeaders headers = new HttpHeaders();
-        headers.set("X-User-Id", userId);
-        headers.set("X-User-Role", userRole);
+        headers.set("X-Authenticated-Id", userId);
+        headers.set("X-Authenticated-Role", userRole);
 
 
         HttpEntity<Void> requestEntity = new HttpEntity<>(headers);

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile default="true" name="Default" enabled="true" />
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="Notification-Service" />
+        <module name="Order-Service" />
+        <module name="common-dto" />
+        <module name="auth" />
+        <module name="gateway" />
+        <module name="Product-Service" />
+      </profile>
+      <profile name="Annotation profile for E-Commerce Backend Project" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="false">
+          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.38/lombok-1.18.38.jar" />
+        </processorPath>
+        <module name="Cart-Service" />
+        <module name="Payment-Service" />
+      </profile>
+    </annotationProcessing>
+  </component>
+  <component name="JavacSettings">
+    <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="Cart-Service" options="-parameters" />
+      <module name="Notification-Service" options="-parameters" />
+      <module name="Order-Service" options="-parameters" />
+      <module name="Payment-Service" options="-parameters" />
+      <module name="Product-Service" options="-parameters" />
+      <module name="auth" options="-parameters" />
+      <module name="common-dto" options="-parameters" />
+      <module name="gateway" options="-parameters" />
+    </option>
+  </component>
+</project>

@@ -1,6 +1,7 @@
 package com.example.Product_Service.service;
 
-import com.example.Product_Service.model.OrderConfirmedEvent; // CHANGED IMPORT
+
+import com.example.common.dto.OrderConfirmedEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

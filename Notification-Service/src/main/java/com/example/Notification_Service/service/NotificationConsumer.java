@@ -1,8 +1,9 @@
 package com.example.Notification_Service.service;
 
-import com.example.Notification_Service.model.OrderConfirmedEvent; // NEW IMPORT
-import com.example.Notification_Service.model.OrderPlacedEvent; // This is now OrderCreatedEvent
-import com.example.Notification_Service.model.PaymentProcessedEvent;
+
+import com.example.common.dto.OrderConfirmedEvent;
+import com.example.common.dto.OrderPlacedEvent;
+import com.example.common.dto.PaymentProcessedEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.kafka.annotation.KafkaListener;

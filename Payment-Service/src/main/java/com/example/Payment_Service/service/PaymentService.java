@@ -1,9 +1,9 @@
 package com.example.Payment_Service.service;
 
 import com.example.Payment_Service.entity.Payment;
-import com.example.Payment_Service.model.OrderPlacedEvent;
-import com.example.Payment_Service.model.PaymentProcessedEvent;
 import com.example.Payment_Service.repository.PaymentRepository;
+import com.example.common.dto.OrderPlacedEvent;
+import com.example.common.dto.PaymentProcessedEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,7 +49,8 @@ public class PaymentService {
                 event.getOrderId(),
                 event.getUserId(),
                 status,
-                transactionId
+                transactionId,
+                event.getAuthToken()
         );
         kafkaTemplate.send("payment-processed-topic", paymentEvent);
         LOGGER.info("Published payment processed event for orderId: {}", event.getOrderId());
