@@ -36,13 +36,13 @@
 
 
     <modules>
-        <module>auth-master</module>
-        <module>gateway-master</module>
-        <module>Product-Service</module>
-        <module>Order-Service</module>
-        <module>Cart-Service</module>
-        <module>Payment-Service</module>
-        <module>Notification-Service</module>
+        <module>auth-service</module>
+        <module>gateway-service</module>
+        <module>product-service</module>
+        <module>order-service</module>
+        <module>cart-service</module>
+        <module>payment-service</module>
+        <module>notification-service</module>
         <module>common-dto</module>
     </modules>
 

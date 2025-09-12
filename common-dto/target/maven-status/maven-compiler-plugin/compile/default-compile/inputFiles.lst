@@ -1,0 +1,10 @@
+/home/prachiks/Downloads/E-Commerce Backend Project/common-dto/src/main/java/com/example/App.java
+/home/prachiks/Downloads/E-Commerce Backend Project/common-dto/src/main/java/com/example/common/dto/CartDTO.java
+/home/prachiks/Downloads/E-Commerce Backend Project/common-dto/src/main/java/com/example/common/dto/CartItemDTO.java
+/home/prachiks/Downloads/E-Commerce Backend Project/common-dto/src/main/java/com/example/common/dto/CartItemRemovalRequest.java
+/home/prachiks/Downloads/E-Commerce Backend Project/common-dto/src/main/java/com/example/common/dto/OrderConfirmedEvent.java
+/home/prachiks/Downloads/E-Commerce Backend Project/common-dto/src/main/java/com/example/common/dto/OrderItemDTO.java
+/home/prachiks/Downloads/E-Commerce Backend Project/common-dto/src/main/java/com/example/common/dto/OrderPlacedEvent.java
+/home/prachiks/Downloads/E-Commerce Backend Project/common-dto/src/main/java/com/example/common/dto/PaymentProcessedEvent.java
+/home/prachiks/Downloads/E-Commerce Backend Project/common-dto/src/main/java/com/example/common/dto/ProductDTO.java
+/home/prachiks/Downloads/E-Commerce Backend Project/common-dto/src/main/java/com/example/common/dto/UserAuthDetails.java

@@ -1,0 +1,10 @@
+com/example/common/dto/OrderItemDTO.class
+com/example/common/dto/CartDTO.class
+com/example/common/dto/PaymentProcessedEvent.class
+com/example/App.class
+com/example/common/dto/ProductDTO.class
+com/example/common/dto/OrderPlacedEvent.class
+com/example/common/dto/CartItemDTO.class
+com/example/common/dto/CartItemRemovalRequest.class
+com/example/common/dto/OrderConfirmedEvent.class
+com/example/common/dto/UserAuthDetails.class
